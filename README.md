@@ -38,7 +38,3 @@ Happy coding and best of luck with your data science interviews!
 
 ## **About Me**:
 I’m a seasoned Data Scientist and founder of [TowardsMachineLearning.Org](https://towardsmachinelearning.org/). I've worked on various Machine Learning, NLP, and cutting-edge deep learning frameworks to solve numerous business problems.
-
-Feel free to customize this `readme.md` based on your preferences and additional information you may want to include.
-
-Feel free to modify and customize this `readme.md` to better suit your preferences and provide any additional information you find relevant.
