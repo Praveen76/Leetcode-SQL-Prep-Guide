@@ -77,6 +77,18 @@ FROM (
 ) AS unique_numbers;
 
 ```
+**Method 1.1:**
+```sql
+WITH CTE AS(
+SELECT num
+from MyNumbers 
+GROUP BY num
+HAVING COUNT(num)=1
+
+)
+SELECT max(num) as num
+FROM CTE
+```
 **Method 2:**
 ```sql
 SELECT MAX(IF(cnt = 1, num, NULL)) AS num
