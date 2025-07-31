@@ -677,6 +677,9 @@ WHERE product_id NOT IN (SELECT product_id
                         WHERE change_date <= '2019-08-16');
 
 ```
+**Note:**
+- First part: For each product, fetch its most recent price on or before '2019-08-16'.
+- Second part: For products without any price by that date, return 10.
 
 **Method 2**
 ```sql
