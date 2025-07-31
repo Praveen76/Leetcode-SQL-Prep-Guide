@@ -1,6 +1,11 @@
+## Answers for below questions: 
+Answer: https://github.com/Praveen76/Leetcode-SQL-Prep-Guide/blob/main/Leetccode-50-QNA_comprehensive.md
+
 # 1. Below are a few good Self-join questions.
 * https://leetcode.com/problems/rising-temperature/description/?envType=study-plan-v2&envId=top-sql-50   - A very good question to understand self-join by merging 2 tables on consecutive dates.
 * https://leetcode.com/problems/managers-with-at-least-5-direct-reports/description/?envType=study-plan-v2&envId=top-sql-50  - A very good question to understand self-join in general.
+
+  
 
 # 2. Below are a few good Cross-join questions.
 * https://leetcode.com/problems/students-and-examinations/description/?envType=study-plan-v2&envId=top-sql-50  - Very good question to understand cross join effectively.
