@@ -370,12 +370,15 @@ order by employee_id asc
 
 **Method 2:**
 ```sql
-WITH CTE AS (
+-- step1. Find employees whose salary is below 30K and are not managers
+WITH CTE AS ( 
     SELECT *
     FROM Employees
     WHERE salary < 30000 
       AND manager_id IS NOT NULL
 )
+-- step2. Find employees whose salary is below 30K and whose managers's IDs are missing (i.e. managers left the company)
+
 SELECT c.employee_id
 FROM CTE c
 LEFT JOIN Employees m ON c.manager_id = m.employee_id
