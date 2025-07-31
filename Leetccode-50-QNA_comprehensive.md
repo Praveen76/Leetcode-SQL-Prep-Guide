@@ -404,6 +404,27 @@ For example, consider this scenario:
 
 To correctly check whether an employee’s manager has left, you should use the full Employees table for the manager lookup rather than a CTE that filters out managers with null manager_id. 
 
+
+**Method 3:(Wrong)**
+```sql
+
+SELECT employee_id
+FROM Employees
+WHERE manager_id IS NULL
+AND salary < 30000
+ORDER BY employee_id ASC;
+```
+Your earlier queries were looking for:
+Employees whose manager_id does not exist in the Employees table (i.e., the manager’s ID is not assigned to any current employee)
+They may still have a value in manager_id—it’s just not a valid employee.
+This query only returns employees who have absolutely no manager (i.e., their manager_id field is literally NULL).
+
+Key Difference
+Your earlier logic:
+Finds employees with a manager ID that does not exist in the table (could be a typo, a fired manager, or a data error), and salary < 30,000.
+This query:
+Only finds employees at the “top of the hierarchy” (like a CEO or founder) with no manager at all, and salary < 30,000.
+
 ## Q9: [Confirmation Rate](https://leetcode.com/problems/confirmation-rate/)
 
 **Method 1:**
