@@ -357,15 +357,21 @@ GROUP BY v.customer_id
 
 **Method 1:**
 ```sql
-Select employee_id
-from Employees
-where manager_id not in ( --Step 1: Find managers whose manager_id isn't present in table as employee_id
+For every employee, checks:
+    - Is this employee’s manager_id not in the list of valid employee IDs (from the inner query)?
+    - AND does this employee earn less than 30,000?
+If both conditions are true, that employee’s ID is included in the output.
 
+SELECT employee_id
+FROM Employees
+WHERE manager_id NOT IN ( -- Step1: list of all people who are present as employees (and thus could potentially be a manager).
+    SELECT employee_id
+    FROM Employees
+    WHERE employee_id IS NOT NULL    
+)
+AND salary < 30000
+ORDER BY employee_id ASC;
 
-    Select employee_id
-    from Employees
-) AND salary < 30000  -- Step 2: Find employees who've salaries < 30000 
-order by employee_id asc
 ```
 
 **Method 2:**
