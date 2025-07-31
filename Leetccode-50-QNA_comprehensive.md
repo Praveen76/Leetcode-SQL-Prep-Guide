@@ -263,7 +263,28 @@ FROM FirstOrders;
 
 ## Q6: [Game Play Analysis IV](https://leetcode.com/problems/game-play-analysis-iv/)
 
+
 **Method 1:**
+
+```sql
+WITH WithFirstDay AS (
+    SELECT 
+        player_id,
+        event_date,
+        MIN(event_date) OVER (PARTITION BY player_id) AS firstDay
+    FROM Activity
+)
+SELECT
+    ROUND(
+        COUNT(DISTINCT player_id) 
+        / (SELECT COUNT(DISTINCT player_id) FROM Activity), 2
+    ) AS fraction
+FROM WithFirstDay
+-- WHERE event_date = DATE_ADD(firstDay, INTERVAL 1 DAY);
+
+WHERE  DATEDIFF(event_date,firstDay)=1
+```
+**Method 1.1:**
 ```sql
 WITH first_login AS (
     -- Get each player's first login date.
