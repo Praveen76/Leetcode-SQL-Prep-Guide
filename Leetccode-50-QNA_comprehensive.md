@@ -201,7 +201,7 @@ FROM Delivery
 )
 
 SELECT 
-round(sum(if (B.order_date=v.customer_pref_delivery_date, 1, 0 ))*100/count(*),2) as immediate_percentage
+round(sum(if (B.order_date=B.customer_pref_delivery_date, 1, 0 ))*100/count(*),2) as immediate_percentage
 
 FROM CTE B
 WHERE rnk=1
