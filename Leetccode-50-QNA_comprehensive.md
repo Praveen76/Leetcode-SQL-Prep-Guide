@@ -377,7 +377,7 @@ WITH CTE AS (
     WHERE salary < 30000 
       AND manager_id IS NOT NULL
 )
--- step2. Find employees whose salary is below 30K and whose managers's IDs are missing (i.e. managers left the company)
+-- step2. Find employees whose salary is below 30K and whose managers' IDs are missing (i.e. managers left the company)
 
 SELECT c.employee_id
 FROM CTE c
