@@ -935,6 +935,29 @@ group by query_name
 
 ## Q27: [Restaurant Growth](https://leetcode.com/problems/restaurant-growth/)
 
+**Method 1:**
+```sql
+WITH CTE AS (
+select visited_on , sum(amount) as amount
+from customer
+group by visited_on
+
+
+)
+select 
+visited_on, 
+sum(amount) OVER(ROWS BETWEEN 6 PRECEDING  and CURRENT row)as amount,
+ROUND((
+avg(amount) OVER(ROWS BETWEEN 6 PRECEDING  and CURRENT row) 
+),2)
+as average_amount
+from cte
+order by visited_on
+limit 1213131212 offset 6
+
+```
+
+**Method2:**
 ```sql
 WITH temp AS (
     SELECT visited_on, SUM(amount) AS amount
