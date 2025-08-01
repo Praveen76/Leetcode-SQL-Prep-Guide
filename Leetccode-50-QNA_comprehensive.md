@@ -903,6 +903,12 @@ LEFT JOIN Bonus B on A.empId=B.empId
 where B.Bonus <1000 or B.Bonus is NULL
 ```
 ## Q26: [Queries Quality and Percentage](https://leetcode.com/problems/queries-quality-and-percentage/)
+This is a classic use-case for conditional aggregation.
+You need to calculate the percentage per query_name, i.e.,
+(number of poor queries for that name) / (total queries for that name).
+
+You want the percentage of poor queries (rating < 3) for each query_name, not for the entire table.
+
 
 **Method 1**
 ```
