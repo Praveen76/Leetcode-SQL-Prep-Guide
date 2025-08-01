@@ -911,17 +911,6 @@ You want the percentage of poor queries (rating < 3) for each query_name, not fo
 
 
 **Method 1**
-```
-select
-query_name,
-round(avg(cast(rating as decimal) / position), 2) as quality,
-round(sum(case when rating < 3 then 1 else 0 end) * 100 / count(*), 2) as poor_query_percentage
-from queries
-WHERE query_name IS NOT NULL
-group by query_name
-```
-**Method 2**
-
 ```sql
 SELECT query_name, 
 ROUND(AVG(rating/position),2) AS quality, 
@@ -931,6 +920,18 @@ FROM Queries
 WHERE query_name IS NOT NULL 
 GROUP BY query_name;
 ```
+**Method 2**
+
+```sql
+select
+query_name,
+round(avg(cast(rating as decimal) / position), 2) as quality,
+round(sum(case when rating < 3 then 1 else 0 end) * 100 / count(*), 2) as poor_query_percentage
+from queries
+WHERE query_name IS NOT NULL
+group by query_name
+```
+
 
 ## Q27: [Restaurant Growth](https://leetcode.com/problems/restaurant-growth/)
 
