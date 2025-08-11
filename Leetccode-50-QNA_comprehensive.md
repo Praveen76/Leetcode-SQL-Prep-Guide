@@ -1334,6 +1334,50 @@ on a1.machine_id=a2.machine_id and a1.process_id=a2.process_id
 and a1.activity_type='start' and a2.activity_type='end'
 group by a1.machine_id;
 ```
+
+** Method 1.1: **
+
+```sql
+WITH cte AS (
+  SELECT
+    machine_id,
+    process_id,
+    SUM(CASE WHEN activity_type = 'end'  THEN `timestamp`
+             ELSE -`timestamp` END) AS time_taken
+  FROM Activity
+  GROUP BY machine_id, process_id
+)
+SELECT
+  a.machine_id,
+  ROUND(AVG(a.time_taken), 3) AS processing_time
+FROM cte a
+GROUP BY a.machine_id
+ORDER BY a.machine_id ASC, processing_time DESC;
+
+```
+
+** Method 1.2: **
+
+```sql
+WITH cte AS (
+  SELECT
+    machine_id,
+    process_id,
+    MAX(CASE WHEN activity_type = 'end'   THEN `timestamp` END) -
+    MAX(CASE WHEN activity_type = 'start' THEN `timestamp` END) AS time_taken
+  FROM Activity
+  GROUP BY machine_id, process_id
+)
+SELECT
+  machine_id,
+  ROUND(AVG(time_taken), 3) AS processing_time
+FROM cte
+GROUP BY machine_id
+ORDER BY machine_id ASC, processing_time DESC;
+
+```
+
+
 ** Method 2**
 ```sql
 select 
