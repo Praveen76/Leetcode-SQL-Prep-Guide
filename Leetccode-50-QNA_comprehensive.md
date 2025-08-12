@@ -873,7 +873,7 @@ UNION ALL
 SELECT 'High Salary', `High Salary` FROM flat_category;
 ```
 **Method 2:**
-```sql
+
 ```sql
 SELECT 'High Salary'   AS category, SUM(income > 50000)  AS accounts_count FROM Accounts
 UNION ALL
