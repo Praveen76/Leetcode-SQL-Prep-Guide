@@ -1577,3 +1577,48 @@ FROM (
 ) AS C
 WHERE C.Ranking = 1;
 ```
+
+
+## Q38: [Friend Requests ||: Who has the most friends] (https://leetcode.com/problems/friend-requests-ii-who-has-the-most-friends/?envType=study-plan-v2&envId=top-sql-50)
+Answer:
+
+**Method 1:**
+
+```sql
+
+#Method 1: Easiest solution
+
+#Step 1 – Combine requester and accepter into one column
+
+with base as(
+    select requester_id id 
+    from RequestAccepted
+union all
+select accepter_id id 
+from RequestAccepted)
+
+
+# Step 2 – Count friendships per user
+
+select id, count(*) num  
+from base 
+group by 1 
+order by 2 desc 
+limit 1
+
+```
+
+**Method 2:**
+
+```sql
+-- #Method 2: Another solution
+
+select requester_id as id,
+       (select count(*) from RequestAccepted
+            where id=requester_id or id=accepter_id) as num
+from RequestAccepted
+group by requester_id
+order by num desc 
+limit 1
+
+```
