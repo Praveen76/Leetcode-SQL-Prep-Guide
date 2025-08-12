@@ -875,11 +875,11 @@ SELECT 'High Salary', `High Salary` FROM flat_category;
 **Method 2:**
 ```sql
 ```sql
-SELECT 'High Salary'   AS category, SUM(income > 50000)                       AS accounts_count FROM Accounts
+SELECT 'High Salary'   AS category, SUM(income > 50000)  AS accounts_count FROM Accounts
 UNION ALL
-SELECT 'Low Salary'                     , SUM(income < 20000)                 AS accounts_count FROM Accounts
+SELECT 'Low Salary' , SUM(income < 20000)  AS accounts_count FROM Accounts
 UNION ALL
-SELECT 'Average Salary'                 , SUM(income BETWEEN 20000 AND 50000) AS accounts_count FROM Accounts;
+SELECT 'Average Salary' , SUM(income BETWEEN 20000 AND 50000) AS accounts_count FROM Accounts;
 
 ```
 
