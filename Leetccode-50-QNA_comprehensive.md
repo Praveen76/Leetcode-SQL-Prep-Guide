@@ -949,6 +949,8 @@ then:
 * That means **all rows** would be counted, not just the poor ones.
 
 
+## Similar example: https://leetcode.com/problems/monthly-transactions-i/description/?envType=study-plan-v2&envId=top-sql-50
+
 **Method 1.1**
 ```sql
 SELECT query_name, 
