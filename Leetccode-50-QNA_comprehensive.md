@@ -1622,3 +1622,83 @@ order by num desc
 limit 1
 
 ```
+
+**Note: why do we need to union all them to get answer to that question?**
+We need the `UNION ALL` because in the **friendship counting problem** both `requester_id` and `accepter_id` represent the *same thing* in the end — a user who gained a friend.
+
+If we only counted `requester_id`, we’d be ignoring half the friendships (the people who accepted).
+If we only counted `accepter_id`, we’d miss the people who initiated requests.
+
+---
+
+### **Why not just count directly in one query?**
+
+Let’s take the sample:
+
+| requester\_id | accepter\_id |
+| ------------- | ------------ |
+| 1             | 2            |
+| 2             | 3            |
+| 1             | 3            |
+
+---
+
+#### Without `UNION ALL` — counting only requesters:
+
+```
+id | num
+1  | 2
+2  | 1
+```
+
+(We completely missed counting `3` who accepted two requests.)
+
+---
+
+#### Without `UNION ALL` — counting only accepters:
+
+```
+id | num
+2  | 1
+3  | 2
+```
+
+(Now we missed `1` who sent two requests.)
+
+---
+
+### **With `UNION ALL`**
+
+We flatten both columns into one:
+
+```
+1
+2
+1
+2
+3
+3
+```
+
+Then counting:
+
+```
+id | num
+1  | 2
+2  | 2
+3  | 2
+```
+
+Now **every friendship is counted for both sides**.
+
+---
+
+### **Why not `UNION` (without ALL)?**
+
+`UNION` removes duplicates *between* the two lists before stacking, which would mess up the counts because if the same user appears in both requester and accepter columns for different friendships, some rows would be wrongly eliminated.
+
+That’s why **`UNION ALL` is required** — duplicates represent real separate friendships.
+
+---
+
+If you want, I can also show you an **alternative single-query method without a CTE** that achieves the same result but makes the logic more explicit. Would that help?
