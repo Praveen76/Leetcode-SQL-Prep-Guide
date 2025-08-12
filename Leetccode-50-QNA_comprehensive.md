@@ -1699,6 +1699,38 @@ Now **every friendship is counted for both sides**.
 
 That’s why **`UNION ALL` is required** — duplicates represent real separate friendships.
 
----
 
-If you want, I can also show you an **alternative single-query method without a CTE** that achieves the same result but makes the logic more explicit. Would that help?
+## Q39: [Investments in 2016](https://leetcode.com/problems/investments-in-2016/?envType=study-plan-v2&envId=top-sql-50)
+
+**Method 1:**
+```sql
+WITH t AS (
+  SELECT *,
+         COUNT(*) OVER (PARTITION BY tiv_2015) AS c2015,
+         COUNT(*) OVER (PARTITION BY lat, lon) AS ccity
+  FROM Insurance
+)
+SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
+FROM t
+WHERE c2015 > 1 AND ccity = 1;
+
+```
+
+
+**Method 2:**
+```sql
+SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
+FROM Insurance
+WHERE tiv_2015 IN (
+    SELECT tiv_2015
+    FROM Insurance
+    GROUP BY tiv_2015
+    HAVING COUNT(*) > 1
+)
+AND (lat, lon) IN (
+    SELECT lat, lon
+    FROM Insurance
+    GROUP BY lat, lon
+    HAVING COUNT(*) = 1
+)
+```
