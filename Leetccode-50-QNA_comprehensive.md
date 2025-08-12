@@ -261,6 +261,64 @@ SELECT
 FROM FirstOrders;
 ```
 
+**Wrong Query:**
+```sql
+with cte as (
+
+    select customer_id,customer_pref_delivery_date,
+    min(order_date) as firstOrder
+    -- min(order_date) over(partition by customer_id) as firstOrder
+    from Delivery
+    group by customer_id
+)
+
+select 
+round(
+100*count(if(firstOrder=customer_pref_delivery_date, 1, null))/ count(*) 
+,2) as immediate_percentage
+from cte
+```
+Main issue: in your CTE you `GROUP BY customer_id` but also select `customer_pref_delivery_date` without aggregating it. That value becomes arbitrary per customer (or errors with `ONLY_FULL_GROUP_BY`). So you end up comparing the true first order date to a **random** preference date, not the preference from the first order row.
+
+Fix it by locating the actual first order row per customer, then compare:
+
+Option A — window (simple and precise):
+
+```
+WITH cte AS (
+  SELECT
+    customer_id,
+    order_date,
+    customer_pref_delivery_date,
+    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date, order_id) AS rn
+  FROM Delivery
+)
+SELECT
+  ROUND(100 * AVG(IF(order_date = customer_pref_delivery_date, 1, 0)), 2) AS immediate_percentage
+FROM cte
+WHERE rn = 1;
+```
+
+Option B — aggregate + join back (no window):
+
+```
+WITH firsts AS (
+  SELECT customer_id, MIN(order_date) AS firstOrder
+  FROM Delivery
+  GROUP BY customer_id
+)
+SELECT
+  ROUND(100 * AVG(IF(d.order_date = d.customer_pref_delivery_date, 1, 0)), 2) AS immediate_percentage
+FROM firsts f
+JOIN Delivery d
+  ON d.customer_id = f.customer_id
+ AND d.order_date = f.firstOrder;
+```
+
+(If ties on the same first date are possible, add a tiebreaker like `MIN(order_id)`.)
+
+
+
 ## Q6: [Game Play Analysis IV](https://leetcode.com/problems/game-play-analysis-iv/)
 
 
