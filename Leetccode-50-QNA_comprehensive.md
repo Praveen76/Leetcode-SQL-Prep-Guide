@@ -854,6 +854,9 @@ ORDER BY sell_date;
 ```
 ## Q17: [Count Salary Categories](https://leetcode.com/problems/count-salary-categories/)
 
+
+**Method 1:**
+
 ```sql
 WITH flat_category AS (
     SELECT 
@@ -869,6 +872,17 @@ SELECT 'Average Salary', `Average Salary` FROM flat_category
 UNION ALL
 SELECT 'High Salary', `High Salary` FROM flat_category;
 ```
+**Method 2:**
+```sql
+```sql
+SELECT 'High Salary'   AS category, SUM(income > 50000)                       AS accounts_count FROM Accounts
+UNION ALL
+SELECT 'Low Salary'                     , SUM(income < 20000)                 AS accounts_count FROM Accounts
+UNION ALL
+SELECT 'Average Salary'                 , SUM(income BETWEEN 20000 AND 50000) AS accounts_count FROM Accounts;
+
+```
+
 ## Q18: [Product Price at a Given Date](https://leetcode.com/problems/product-price-at-a-given-date/)
 
 
