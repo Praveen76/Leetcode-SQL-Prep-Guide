@@ -1704,14 +1704,14 @@ That’s why **`UNION ALL` is required** — duplicates represent real separate 
 
 **Method 1:**
 ```sql
-WITH t AS (
+WITH cte AS (
   SELECT *,
          COUNT(*) OVER (PARTITION BY tiv_2015) AS c2015,
          COUNT(*) OVER (PARTITION BY lat, lon) AS ccity
   FROM Insurance
 )
 SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
-FROM t
+FROM cte
 WHERE c2015 > 1 AND ccity = 1;
 
 ```
