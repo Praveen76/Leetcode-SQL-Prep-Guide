@@ -919,6 +919,36 @@ FROM Queries
 GROUP BY query_name;
 ```
 
+That’s a SQL trick to make `COUNT()` count **only the matching rows**.
+
+### How it works
+
+* `COUNT(expr)` in SQL **ignores** `NULL` values.
+* If you write:
+
+```sql
+COUNT(IF(rating < 3, 1, NULL))
+```
+
+it means:
+
+* When `rating < 3` → return `1` (not `NULL`) → **counts it**
+* When `rating >= 3` → return `NULL` → **ignored by COUNT()**
+
+### Why not `COUNT(IF(..., 0))`?
+
+If you use `0` instead of `NULL`:
+
+```sql
+COUNT(IF(rating < 3, 1, 0))
+```
+
+then:
+
+* When `rating >= 3`, `0` is still **not NULL**, so it gets counted too.
+* That means **all rows** would be counted, not just the poor ones.
+
+
 **Method 1.1**
 ```sql
 SELECT query_name, 
