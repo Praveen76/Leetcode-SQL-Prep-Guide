@@ -1734,3 +1734,118 @@ AND (lat, lon) IN (
     HAVING COUNT(*) = 1
 )
 ```
+
+
+
+## **First Solution — Using `GROUP BY` Subqueries**
+
+```sql
+SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
+FROM Insurance i
+WHERE i.tiv_2015 IN (
+  SELECT tiv_2015
+  FROM Insurance
+  GROUP BY tiv_2015
+  HAVING COUNT(*) > 1
+)
+AND (i.lat, i.lon) IN (
+  SELECT lat, lon
+  FROM Insurance
+  GROUP BY lat, lon
+  HAVING COUNT(*) = 1
+);
+```
+
+### **Logic**
+
+1. **Requirement 1:**
+   *Policyholder must have the same `tiv_2015` as at least one other policyholder.*
+
+   * This is achieved by:
+
+     ```sql
+     SELECT tiv_2015
+     FROM Insurance
+     GROUP BY tiv_2015
+     HAVING COUNT(*) > 1
+     ```
+
+     This returns `tiv_2015` values that appear more than once in the table.
+
+2. **Requirement 2:**
+   *Policyholder’s `(lat, lon)` must be unique.*
+
+   * This is done by:
+
+     ```sql
+     SELECT lat, lon
+     FROM Insurance
+     GROUP BY lat, lon
+     HAVING COUNT(*) = 1
+     ```
+
+     This returns coordinates that appear only once.
+
+3. **Main Query Filtering:**
+
+   * We keep only those rows where:
+
+     * Their `tiv_2015` is in the first subquery result (**has duplicates**).
+     * Their `(lat, lon)` is in the second subquery result (**unique location**).
+
+4. **Final Step:**
+
+   * We `SUM(tiv_2016)` for those rows and `ROUND` it to 2 decimal places.
+
+---
+
+## **Second Solution — Using Window Functions (MySQL 8+ / PostgreSQL)**
+
+```sql
+WITH t AS (
+  SELECT *,
+         COUNT(*) OVER (PARTITION BY tiv_2015) AS c2015,
+         COUNT(*) OVER (PARTITION BY lat, lon) AS ccity
+  FROM Insurance
+)
+SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
+FROM t
+WHERE c2015 > 1 AND ccity = 1;
+```
+
+### **Logic**
+
+1. **COUNT(\*) OVER (PARTITION BY tiv\_2015)**:
+
+   * For each row, counts how many rows have the same `tiv_2015`.
+   * This avoids the need for a separate `GROUP BY` subquery.
+   * `c2015 > 1` means "there is at least one other row with same `tiv_2015`".
+
+2. **COUNT(\*) OVER (PARTITION BY lat, lon)**:
+
+   * For each row, counts how many rows share the same `(lat, lon)` coordinates.
+   * `ccity = 1` means "location is unique".
+
+3. **WHERE condition**:
+
+   * Keep only rows that meet both conditions.
+
+4. **SUM & ROUND**:
+
+   * Sum up `tiv_2016` for those rows and round to 2 decimals.
+
+---
+
+### **Key Differences**
+
+* **First solution:**
+
+  * More compatible with older SQL versions (works in MySQL < 8.0, PostgreSQL, etc.).
+  * Uses subqueries with `GROUP BY`.
+* **Second solution:**
+
+  * Requires MySQL 8+ or a database that supports **window functions**.
+  * Often faster since it avoids multiple scans of the table.
+
+
+
