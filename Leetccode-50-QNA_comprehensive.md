@@ -220,6 +220,24 @@ WHERE rnk=1
 
 ```
 
+** Method 1.1.1:**
+
+```sql
+WITH cte AS (
+  SELECT
+    customer_id,
+    order_date,
+    customer_pref_delivery_date,
+    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date) rn
+  FROM Delivery
+)
+SELECT
+  ROUND(100 * AVG(IF(order_date = customer_pref_delivery_date, 1, 0)), 2) AS immediate_percentage
+FROM cte
+WHERE rn = 1;
+
+```
+
 **Method 1.2:**
 
 ```sql
