@@ -875,6 +875,8 @@ SELECT 'High Salary', `High Salary` FROM flat_category;
 **Method 1**
 ```sql
 # Write your MySQL query statement below
+# Part 1 — products with no change ≤ date → price 10
+
 SELECT 
 product_id, 
 new_price AS price 
@@ -888,6 +890,8 @@ WHERE (product_id, change_date) IN (
                                     GROUP BY product_id)
 
 UNION
+
+# Part 2 — products with at least one change ≤ date → take the last one
 
 SELECT product_id, 10 AS price 
 FROM Products 
