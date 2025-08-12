@@ -385,6 +385,45 @@ SELECT ROUND(
 ) AS fraction;
 
 ```
+
+**Method 1.3: Window + ROW_NUMBER()**
+```sql
+WITH cte AS (
+  SELECT
+    player_id,
+    event_date,
+    ROW_NUMBER() OVER (PARTITION BY player_id ORDER BY event_date) AS rn
+  FROM Activity
+)
+SELECT
+  COUNT(DISTINCT a.player_id) * 1.0
+  / (SELECT COUNT(DISTINCT player_id) FROM Activity) AS fraction
+FROM cte c
+JOIN Activity a
+  ON a.player_id = c.player_id
+ AND a.event_date = DATE_ADD(c.event_date, INTERVAL 1 DAY)
+WHERE c.rn = 1;
+
+```
+
+**Method 1.3: Aggregate + join back (simplest)** 
+
+```sql
+WITH firsts AS (
+  SELECT player_id, MIN(event_date) AS first_login
+  FROM Activity
+  GROUP BY player_id
+)
+SELECT
+  COUNT(*) * 1.0
+  / (SELECT COUNT(DISTINCT player_id) FROM Activity) AS fraction
+FROM firsts f
+JOIN Activity a
+  ON a.player_id = f.player_id
+ AND a.event_date = DATE_ADD(f.first_login, INTERVAL 1 DAY);
+
+```
+
 **Method 2:**
 ```sql
 # Write your MySQL query statement below
