@@ -644,6 +644,58 @@ GROUP BY user_id;
 
 ```
 
+## Q9.1: When can we use AVG to calculate percentage?
+### Answer:
+
+You can use `AVG()` as a percentage in SQL when the numerator is represented as `1` for a "success" (or "yes") case and `0` for a "failure" (or "no") case. The average of these 0/1 values will give you the fraction of successes, which can then be turned into a percentage.
+
+### Why it works
+
+* If a user has 3 confirmed actions and 1 unconfirmed:
+
+  ```
+  Values = [1, 1, 1, 0]
+  SUM = 3
+  COUNT = 4
+  AVG = 3 / 4 = 0.75
+  ```
+
+  Multiplying by 100 gives you 75%.
+
+* Your query:
+
+  ```sql
+  SELECT s.user_id,
+         ROUND(AVG(IF(c.action = 'confirmed', 1, 0)), 2) AS confirmation_rate
+  FROM Signups AS s
+  LEFT JOIN Confirmations AS c
+         ON s.user_id = c.user_id
+  GROUP BY s.user_id;
+  ```
+
+  Here:
+
+  * `IF(c.action = 'confirmed', 1, 0)` turns each row into either 1 or 0.
+  * `AVG(...)` calculates the mean of those binary values.
+  * `ROUND(..., 2)` formats it to two decimal places.
+
+### When to use this method
+
+* **Binary events**: Yes/No, True/False, Passed/Failed, etc.
+* **Proportion metrics**: Click-through rate, completion rate, win rate, etc.
+* **Data is row-based**: Each row represents an individual event/attempt.
+
+### Converting to percentage
+
+If you want a percentage directly:
+
+```sql
+ROUND(AVG(IF(c.action = 'confirmed', 1, 0)) * 100, 2) AS confirmation_rate_pct
+```
+
+
+
+
 ## Q10:[User Activity for the Past 30 Days I](https://leetcode.com/problems/user-activity-for-the-past-30-days-i/)
 
 **Method 1:**
