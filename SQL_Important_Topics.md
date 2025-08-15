@@ -53,6 +53,7 @@ SUM(revenue) OVER (
 
 This means: “Take the current date, look back **6 calendar days**, and include all rows whose `dt` falls in that range.”
 
+
 Step-by-step:
 
 * For `2025-08-07`:
@@ -72,5 +73,15 @@ Step-by-step:
 
 ---
 
-If you like, I can create a **side-by-side table output** for both versions so you can visually see the rolling sums differ.
-That way, you’ll instantly spot the difference.
+I’ve put a side-by-side table in your workspace showing both calculations.
+
+What to notice:
+
+* On **2025-08-07**:
+
+  * **ROWS** (prev 2 rows + current) = 300 + 400 + 500 = **1200**.
+  * **RANGE** (last 6 calendar days) spans 2025-08-01…2025-08-07, so 100+200+300+400+500 = **1500**.
+* Because **RANGE** uses actual dates, it “sees” 08-01 and 08-02 even though there are gaps (no rows on 08-03, 08-04). **ROWS** only looks at the last two physical rows, ignoring earlier days within the 6-day calendar window.
+
+
+
